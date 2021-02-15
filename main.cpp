@@ -50,9 +50,9 @@ int main() {
 
     // Save the read line into a String and keep track of the position you are at.
 
-    // Check every element from the string. First check if next element is a space, 
-    // if so, check if current element is either a separator or operator. If it is
-    // then we know the token and lexem. If not, check if it's a keyword. If not that, then it must be an identifier.
+    // Check every element from the string. First check if the current element is a space, 
+    // if not, check if the element is either a separator or operator. If not, check if 
+    // it's a keyword. If not that, then it must be an identifier.
 
     // We need to make sure we aren't trying to check for an element that's out of bounds
     // to avoid Seg Faults. To do this we must have a check for what our next elements are and if they
