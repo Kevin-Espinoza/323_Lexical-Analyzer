@@ -1,0 +1,65 @@
+//              	 LEX_LINE_COMMENT
+int              	 LEX_IDENTIFIER 
+main              	 LEX_IDENTIFIER 
+(              	 LEX_LEFT_PARENTHESIS 
+)              	 LEX_RIGHT_PARENTHESIS 
+{              	 LEX_LEFT_BRACE 
+int              	 LEX_IDENTIFIER 
+a              	 LEX_IDENTIFIER 
+b              	 LEX_IDENTIFIER 
+a              	 LEX_IDENTIFIER 
+=               	 LEX_ASSIGNMENT              	 LEX_NO_OPR
+b              	 LEX_IDENTIFIER 
+=               	 LEX_ASSIGNMENT              	 LEX_NO_OPR
+5              	 LEX_INTEGER 
+cout              	 LEX_KEYWORD              	 LEX_COUT 
+<<              	 LEX_OPERATOR              	 LEX_COUT_OPR
+a              	 LEX_IDENTIFIER 
+<<              	 LEX_OPERATOR              	 LEX_COUT_OPR
+               	 LEX_STRING 
+<<              	 LEX_OPERATOR              	 LEX_COUT_OPR
+b              	 LEX_IDENTIFIER 
+<<              	 LEX_OPERATOR              	 LEX_COUT_OPR
+
+              	 LEX_STRING 
+;              	 LEX_SEMICOLON 
+while              	 LEX_KEYWORD              	 LEX_WHILE 
+a              	 LEX_IDENTIFIER 
+a              	 LEX_IDENTIFIER 
+1              	 LEX_INTEGER 
+{              	 LEX_LEFT_BRACE 
+cout              	 LEX_KEYWORD              	 LEX_COUT 
+<<              	 LEX_OPERATOR              	 LEX_COUT_OPR
+a              	 LEX_IDENTIFIER 
+<<              	 LEX_OPERATOR              	 LEX_COUT_OPR
+               	 LEX_STRING 
+;              	 LEX_SEMICOLON 
+do              	 LEX_KEYWORD              	 LEX_DO 
+{              	 LEX_LEFT_BRACE 
+cout              	 LEX_KEYWORD              	 LEX_COUT 
+<<              	 LEX_OPERATOR              	 LEX_COUT_OPR
+b              	 LEX_IDENTIFIER 
+<<              	 LEX_OPERATOR              	 LEX_COUT_OPR
+               	 LEX_STRING 
+;              	 LEX_SEMICOLON 
+}              	 LEX_RIGHT_BRACE 
+while              	 LEX_KEYWORD              	 LEX_WHILE 
+(              	 LEX_LEFT_PARENTHESIS 
+b              	 LEX_IDENTIFIER 
+b              	 LEX_IDENTIFIER 
+-               	 LEX_OPERATOR              	 LEX_SUB
+1              	 LEX_INTEGER 
+)              	 LEX_RIGHT_PARENTHESIS 
+>               	 LEX_OPERATOR              	 LEX_GT
+-              	 LEX_OPERATOR              	 LEX_NEG
+5              	 LEX_INTEGER 
+;              	 LEX_SEMICOLON 
+cout              	 LEX_KEYWORD              	 LEX_COUT 
+<<              	 LEX_OPERATOR              	 LEX_COUT_OPR
+
+              	 LEX_STRING 
+;              	 LEX_SEMICOLON 
+}              	 LEX_RIGHT_BRACE 
+return              	 LEX_IDENTIFIER 
+0              	 LEX_INTEGER 
+}              	 LEX_RIGHT_BRACE 
