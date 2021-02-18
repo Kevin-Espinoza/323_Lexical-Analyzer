@@ -2,6 +2,8 @@
 #include <string>
 #include <unordered_map>
 
+// Possible states: Idle
+
 struct Tokens 
 {
 

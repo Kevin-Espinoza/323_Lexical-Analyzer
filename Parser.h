@@ -9,9 +9,11 @@ private:
     Tokens tokens;
     std::string filename;
 	std::ifstream myReader;
+    std::vector<std::pair<int, int>> lexemes;
 public:
     Parser();
     Parser(std::string filname);
+    std::pair<int, int> match_pattern(std::string);
     void readFromFile();
 };
 
@@ -25,6 +27,16 @@ Parser::Parser(std::string filename)
     this->filename = filename;
 }
 
+std::pair<int, int> Parser::match_pattern(std::string pattern) {
+    std::pair<int, int> category_and_id;
+    // category_and_id.first = this->tokens.keywords.find(pattern)->first;
+    // if (category_and_id != this->tokens.keywords.end()) {
+    // }
+    // if (this->tokens.keywords.find(pattern) != this->tokens.identifiers.end()) {
+
+    // }
+    return category_and_id;
+}
     // TODO: Have the program read in line for line from the input file
 
     // Save the read line into a String and keep track of the position you are at.
@@ -46,20 +58,32 @@ void Parser::readFromFile()
 		while (std::getline(myReader, input))		//read to end of file
 		{
 			// std::cout << lineFromFile << '\n';				//print out each line
-
+            int window_start = 0;
+            int window_size;
+            std::string pattern = "";
+            std::pair<int, int> lexeme;
             for (int i = 0; i < input.size(); ++i) 
             {
+                window_size = i - window_start + 1;
                 if (input[i] != ' ') 
                 {
-                    if (tokens.separators.find(input[i]) != tokens.separators.end())
+                    if (this->tokens.separators.find(input[i]) != this->tokens.separators.end())
                     {
                         // We know its an separator
-                        std::cout << "Found a separator!";
+                        std::cout << "Found a separator!\n";
+                        if (window_size > 1) {
+                            pattern = input.substr(window_start, window_size - 1);
+                        }
+                        window_start = i;
                     }
-                    else if (tokens.operators.find(input[i]) != tokens.operators.end())
+                    else if (this->tokens.operators.find(input[i]) != this->tokens.operators.end())
                     {
                         // We know its an operator
                         std::cout << "Found an operator!";
+                        if (window_size > 1) {
+                            pattern = input.substr(window_start, window_size - 1);
+                        }
+                        window_start = i;
                     }    
                     else 
                     {
@@ -70,12 +94,17 @@ void Parser::readFromFile()
                         // {
                         //     ++i;  
                         // }
+                        // i.e attempt to enforce syntactical rules for keywords, identifiers, etc.
+                        // I believe this might be more appropriate to do after collecting lexemes...
                     }
                 }
                 else 
                 {
-
+                        pattern = input.substr(i, window_size);
+                        window_start = i;
                 }
+            // std::cout << pattern;
+            // lexeme = match_pattern(pattern);
             } 
             // This is blank space, just separate by comma
 		myReader.close();										//always close the file
