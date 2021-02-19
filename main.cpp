@@ -7,7 +7,7 @@
                Andres Jaramillo
                Jaime Lambrecht
                Steven Tran
-               est_jan -- replace w real name
+               Janelle Estabillo
 */
 #include "Parser.h"
 
