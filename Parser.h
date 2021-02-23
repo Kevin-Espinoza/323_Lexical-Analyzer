@@ -1,4 +1,17 @@
+    // TODO: Have the program read in line for line from the input file
+
+    // Save the read line into a String and keep track of the position you are at.
+
+    // Check every element from the string. First check if the current element is a space, 
+    // if not, check if the element is either a separator or operator. If not, check if 
+    // it's a keyword. If not that, then it must be an identifier.
+
+    // We need to make sure we aren't trying to check for an element that's out of bounds
+    // to avoid Seg Faults. To do this we must have a check for what our next elements are and if they
+    // are within our string's size.
+
 #include "Tokens.h"
+#include "State.h"
 #include <fstream>
 #include <iostream>
 #include <iomanip>
@@ -40,17 +53,6 @@ std::pair<int, int> Parser::match_pattern(std::string pattern) {
     return category_and_id;
 }
 */
-    // TODO: Have the program read in line for line from the input file
-
-    // Save the read line into a String and keep track of the position you are at.
-
-    // Check every element from the string. First check if the current element is a space, 
-    // if not, check if the element is either a separator or operator. If not, check if 
-    // it's a keyword. If not that, then it must be an identifier.
-
-    // We need to make sure we aren't trying to check for an element that's out of bounds
-    // to avoid Seg Faults. To do this we must have a check for what our next elements are and if they
-    // are within our string's size.
 
 void Parser::readFromFile() 
 {
@@ -71,28 +73,18 @@ void Parser::readFromFile()
     myReader.open(filename);
 
     // Make sure the files successfully open
-	if (myReader.is_open() && token_separation.is_open())										//make sure file can be opened
+	if (myReader.is_open() && token_separation.is_open())
 	{
-		while (std::getline(myReader, input))		//read to end of file
+		while (std::getline(myReader, input))
 		{
-			// std::cout << lineFromFile << '\n';				//print out each line
-
-
 
             int window_start = 0;
             int window_size;
             std::string pattern = "";
             std::pair<int, int> lexeme;
+
             for (int i = 0; i < input.size(); ++i) 
             {
-
-                // TODO: Identify if the first element starts with a '!', if so this is a 
-                //       comment and should be ignored by the program
-                /*
-                if (input[0] == '!') {
-                    go to the next line in the text
-                }
-                */
 
                 window_size = i - window_start + 1;
                 if (input[i] != ' ') 
@@ -110,30 +102,17 @@ void Parser::readFromFile()
                         found_pattern = true;
                     }    
                     else {
-
-                        
-                        
-                        
-
-                        // try something else
-                        // If its an identifier or keyword, iterate to the next blank space
-                        // Ex:  
-                        // if (input[i] != ' ' && i+1 != input.size()) 
-                        // {
-                        //     ++i;  
-                        // }
                         // i.e attempt to enforce syntactical rules for keywords, identifiers, etc.
                         // I believe this might be more appropriate to do after collecting lexemes...
                     }
                 }
-                
                 else 
                 {
                     found_pattern = true;
                 }
                 // std::cout << pattern;
                 // lexeme = match_pattern(pattern);
-                
+
                 if (found_pattern) {
                     if (window_size > 1) 
                         pattern = input.substr(window_start, window_size - 1);
@@ -149,28 +128,10 @@ void Parser::readFromFile()
                     else
                         token_separation << "EXPRESSION   =    " << pattern << std::endl;
                 }
-
-
-
-                /*
-
-                if (this->tokens.keywords.find(pattern) != this->tokens.keywords.end()) {
-                        token_separation << "KEYWORD      =    " << pattern << std::endl;
-                }
-
-                if (window_size > 1) {
-                            pattern = input.substr(window_start, window_size - 1);
-                        }
-                        if (i+1 < input.size())
-                            window_start = i+1;
-                */
-
-            
             } 
-            // This is blank space, just separate by comma
         }
         myReader.close();		
-        token_separation.close();								//always close the file
+        token_separation.close();
 	}
 
 	else std::cerr << "Unable to open file";
