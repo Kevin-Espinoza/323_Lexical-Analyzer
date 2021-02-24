@@ -3,9 +3,16 @@
 #include <unordered_map>
 
 // Possible states: Idle
+enum Category {
+    Separators = 0,
+    Operators,
+    Keywords,
+    Identifers
+} category;
 
 struct Tokens 
 {
+    std::string categories[4] = {"SEPARATOR", "OPERATOR", "KEYWORD", "IDENTIFIER"};
 
     std::unordered_map<std::string, int> keywords = { 
         { "int" , 0}, { "float" , 1}, { "bool" , 2}, { "True"    , 3},
