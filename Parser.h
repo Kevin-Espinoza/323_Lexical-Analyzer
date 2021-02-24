@@ -80,7 +80,8 @@ std::pair<int, int> Parser::match_pattern(std::string pattern) {
     } 
     else 
     {
-        it = this->tokens.identifiers.find(pattern);
+        // This has no fail value for undefined identifiers, because we are not there yet.
+        auto it = this->tokens.identifiers.find(pattern);
         category_and_id.first = Category::Identifers;
         if (it != this->tokens.identifiers.end()) 
         {
@@ -160,6 +161,7 @@ void Parser::readFromFile()
 
 		while (std::getline(myReader, input))
 		{
+            backup = false;
             for (int i = 0; i < input.size(); ++i) 
             {
                 if (backup) {
@@ -168,7 +170,7 @@ void Parser::readFromFile()
                 }
                 switch (parser_state) {
                     case PARSER_DEFAULT:
-                        if (input[i] != ' ') 
+                        if (input[i] != ' ' && input[i] != '\t') 
                         {
                             if (input[i] == '!') 
                             {
