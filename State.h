@@ -1,6 +1,7 @@
 enum Parser_State {
-    STATE_INITIAL = 0,
-    STATE_TOKEN,
-    STATE_COMMENT,
-    STATE_END 
-};
+    PARSER_DEFAULT = 0,
+    PARSER_INIT_TOKEN,
+    PARSER_BUILD_TOKEN,
+    PARSER_RECORD_TOKEN,
+    PARSER_COMMENT 
+} parser_state;
