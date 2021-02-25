@@ -46,32 +46,6 @@ Parser::Parser(std::string filename)
 std::pair<int, int> Parser::match_pattern(std::string pattern) {
     std::pair<int, int> category_and_id;
 
-    // This is a bad copy of the overload for single char separators / operators
-    // This should definitely be refactored.
-    // if (pattern.length() == 1) {
-    //     char symbol = pattern[0];
-    //     auto it = tokens.separators.find(symbol);
-    //     if (it != this->tokens.separators.end())
-    //     {
-    //         category_and_id.first = Category::Separators; 
-    //         category_and_id.second = it->second; 
-    //         // We know its an separator
-    //     }
-    //     else {
-    //         auto it = tokens.separators.find(symbol);
-    //         if (it != this->tokens.operators.end())
-    //         {
-    //             category_and_id.first = Category::Operators; 
-    //             category_and_id.second = it->second; 
-    //             // We know its an operator
-    //         } else {
-    //             category_and_id.first = -1;
-    //             category_and_id.second = -1;
-    //         }
-    //     }
-    //     return category_and_id;
-    // }
-
     auto it = tokens.keywords.find(pattern);
     if (it != this->tokens.keywords.end()) 
     {
@@ -148,6 +122,7 @@ void Parser::readFromFile()
     // entire current line in the text
 	std::string input;
 	std::string pattern;
+    bool is_sep_or_opr = false;
 
     // This is the file we are reading from
     myReader.open(filename);
@@ -161,11 +136,12 @@ void Parser::readFromFile()
 
 		while (std::getline(myReader, input))
 		{
-            backup = false;
             for (int i = 0; i < input.size(); ++i) 
             {
                 if (backup) {
-                    i--;
+                    if (i > 0) {
+                        i--;
+                    }
                     backup = false;
                 }
                 switch (parser_state) {
@@ -175,7 +151,6 @@ void Parser::readFromFile()
                             if (input[i] == '!') 
                             {
                                 parser_state = PARSER_COMMENT;
-                                std::cout << "DEBUG: Began comment.\n";
                             } 
                             else
                             {
@@ -188,9 +163,10 @@ void Parser::readFromFile()
                         if (match_pattern(input[i]).first != -1) 
                         {
                             // Found a separator or operator before anything else
-                            std::cout << "Found lone sep/opr\n";
+                            pattern.clear(); 
                             pattern = input.substr(i, 1);
                             parser_state = PARSER_RECORD_TOKEN;
+                            is_sep_or_opr = true;
                         }
                         else 
                         {
@@ -212,14 +188,14 @@ void Parser::readFromFile()
                         }
                         break;
                     case PARSER_RECORD_TOKEN:
-                        // This is a bad, band-aid solution. Remove this if and fix match_pattern
-                        if (pattern.length() == 1) {
-                            token.first = pattern;
+                        // This is a bad, band-aid solution[?]. Remove this if and fix match_pattern???
+                        token.first = pattern;
+                        if (is_sep_or_opr) {
                             token.second = match_pattern(pattern[0]);
+                            is_sep_or_opr = false;
                         }
                         else
                         {
-                            token.first = pattern;
                             token.second = match_pattern(pattern);
                         }
                         this->lexemes.push_back(token);
@@ -227,6 +203,7 @@ void Parser::readFromFile()
                         parser_state = PARSER_DEFAULT;
                         backup = true;
                         break;
+                        
                     case PARSER_COMMENT:
                         if (input[i] == '!')
                             parser_state = PARSER_DEFAULT;
