@@ -164,6 +164,9 @@ void Parser::readFromFile()
 
 		while (std::getline(myReader, input))
 		{
+            if (myReader.eof()) {
+                input.push_back('\n');
+            }
             for (int i = 0; i < input.size(); ++i) 
             {
                 if (backup) {
