@@ -29,6 +29,8 @@ public:
     Parser(std::string filname);
     std::pair<int, int> match_pattern(std::string);
     std::pair<int, int> match_pattern(char);
+    bool check_if_digit(char current);
+    bool check_if_digits(std::string pattern);
     void writeToFile(std::ofstream &token_separation);
     void readFromFile();
 };
@@ -63,7 +65,12 @@ std::pair<int, int> Parser::match_pattern(std::string pattern) {
         } 
         else 
         {
-            category_and_id.second = -1;
+            if (check_if_digits(pattern)) {
+                category_and_id.first = Category::Literals;
+                category_and_id.second = Numbers::Integer;
+            } else {
+                category_and_id.second = -1;
+            }
         }
     }
 
@@ -94,6 +101,22 @@ std::pair<int, int> Parser::match_pattern(char symbol) {
     }
     return category_and_id;
 }
+    
+bool Parser::check_if_digit(char current) {
+    if (current < 48 || current > 57) {
+        return false;
+    }
+    return true;
+}
+
+bool Parser::check_if_digits(std::string pattern) {
+    for (int i = 0; i < pattern.length(); i++) {
+        if (pattern[i] < 48 || pattern[i] > 57) {
+            return false;
+        }
+    }
+    return true;
+}
 
 void Parser::writeToFile(std::ofstream &token_separation)
 {
@@ -104,6 +127,9 @@ void Parser::writeToFile(std::ofstream &token_separation)
             token_separation << this->tokens.categories[category_and_id.first] << "\t=\t";
             // token_separation << "KEYWORD      =    ";
             // token_separation << "EXPRESSION   =    "; 
+            token_separation << lexeme.first << std::endl;
+        } else if (category_and_id.first == Literals) {
+            token_separation << this->tokens.literals[category_and_id.second] << "\t=\t";
             token_separation << lexeme.first << std::endl;
         }
     }
@@ -123,6 +149,8 @@ void Parser::readFromFile()
 	std::string input;
 	std::string pattern;
     bool is_sep_or_opr = false;
+    bool is_real = false;
+    bool done = false;
 
     // This is the file we are reading from
     myReader.open(filename);
@@ -146,7 +174,7 @@ void Parser::readFromFile()
                 }
                 switch (parser_state) {
                     case PARSER_DEFAULT:
-                        if (input[i] != ' ' && input[i] != '\t') 
+                        if (input[i] != ' ' && input[i] != '\t' && input[i] != '\n') 
                         {
                             if (input[i] == '!') 
                             {
@@ -177,10 +205,30 @@ void Parser::readFromFile()
                         }
                         break;
                     case PARSER_BUILD_TOKEN:
-                        if (match_pattern(input[i]).first != -1 || input[i] == ' ') {
+                        if (match_pattern(input[i]).first != -1 || input[i] == ' ' || input[i] == '\n') {
                             // current char is a separator, operator, or whitespace (delimiter)
                             // finalize pattern and move to recording state
                             // Make sure to back up (decrement the index) so that we don't skip reading the delimiter 
+                            if (match_pattern(input[i]).first == Category::Separators && match_pattern(input[i]).second == 7) {
+                                if (check_if_digits(pattern)) {
+                                    pattern.push_back(input[i]);
+                                    parser_state = PARSER_BUILD_REAL;
+                                } else {
+                                    parser_state = PARSER_RECORD_TOKEN;
+                                    backup = true;
+                                }
+                            } else {
+                                parser_state = PARSER_RECORD_TOKEN;
+                                backup = true;
+                            }
+                        }
+                        else { 
+                            pattern.push_back(input[i]);
+                        }
+                        break;
+                    case PARSER_BUILD_REAL:
+                        is_real = true;
+                        if (!check_if_digit(input[i])) {
                             parser_state = PARSER_RECORD_TOKEN;
                             backup = true;
                         } else {
@@ -193,6 +241,13 @@ void Parser::readFromFile()
                         if (is_sep_or_opr) {
                             token.second = match_pattern(pattern[0]);
                             is_sep_or_opr = false;
+                        }
+                        else if (is_real) {
+                            std::pair<int, int> category_and_id;
+                            category_and_id.first = Literals;
+                            category_and_id.second = Float;
+                            token.second = category_and_id;
+                            is_real = false;
                         }
                         else
                         {
@@ -212,7 +267,7 @@ void Parser::readFromFile()
                         std::cerr << "ERROR: Undefined state in Parser::readFromFile()";
                         exit(1);
                 }
-            } 
+            }
         }
 
         writeToFile(token_separation);

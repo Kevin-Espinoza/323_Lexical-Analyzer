@@ -7,12 +7,20 @@ enum Category {
     Separators = 0,
     Operators,
     Keywords,
-    Identifers
+    Identifers,
+    Literals 
 } category;
+
+enum Numbers {
+    Integer = 0,
+    Float,
+    String
+} numbers;
 
 struct Tokens 
 {
-    std::string categories[4] = {"SEPARATOR", "OPERATOR", "KEYWORD\t", "IDENTIFIER"};
+    std::string categories[6] = {"SEPARATOR", "OPERATOR", "KEYWORD\t", "IDENTIFIER"};
+    std::string literals[2] = {"INTEGER\t", "FLOAT\t"};
 
     std::unordered_map<std::string, int> keywords = { 
         { "int" , 0}, { "float" , 1}, { "bool" , 2}, { "True"    , 3},
@@ -36,5 +44,7 @@ struct Tokens
         { '*', 0}, { '+', 1}, { '-', 2}, { '=', 3}, { '/', 4}, { '>', 5},
         { '<', 6}, { '%', 7}
     };
+
+
 
 };
