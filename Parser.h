@@ -32,7 +32,7 @@ public:
     bool check_if_digit(char current);
     bool check_if_digits(std::string pattern);
     void writeToFile(std::ofstream &token_separation);
-    void readFromFile();
+    void lexer();
 };
 
 Parser::Parser() 
@@ -135,7 +135,7 @@ void Parser::writeToFile(std::ofstream &token_separation)
     }
 }
 
-void Parser::readFromFile() 
+void Parser::lexer() 
 {
     // This file is where the tokens and lexemes will be printed
     std::ofstream token_separation;
