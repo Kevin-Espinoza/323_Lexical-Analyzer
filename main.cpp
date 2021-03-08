@@ -5,7 +5,7 @@
 
 /* Written By: Kevin Espinoza
                Andres Jaramillo
-               Jaime Lambrecht
+               Jamie Lambrecht
                Steven Tran
                Janelle Estabillo
 */
