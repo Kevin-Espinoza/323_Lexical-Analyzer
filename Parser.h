@@ -267,7 +267,7 @@ void Parser::lexer()
                             parser_state = PARSER_DEFAULT;
                         break;
                     default:
-                        std::cerr << "ERROR: Undefined state in Parser::readFromFile()";
+                        std::cerr << "ERROR: Undefined state in Parser::lexer()";
                         exit(1);
                 }
             }
