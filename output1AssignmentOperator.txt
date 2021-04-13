@@ -1,0 +1,126 @@
+
+Token: Operator       Lexeme:   %%                  
+
+
+Token: Identifier     Lexeme:   x                   
+	<Statement List> -> <Statement> | <Statement> <Statement List>
+	<Statement> -> <Compound> | <Assign> | <If> | <Return> | <Print> | <Scan> | <While> 
+	<Assign> -> <Identifier> = <Expression>;
+
+Token: Operator       Lexeme:   =                   
+
+Token: Identifier     Lexeme:   a                   
+	<Expression> -> <Term> <ExpressionPrime>
+	<Term> -> <Factor> <TermPrime>
+	<Factor> -> - <Primary> | <Primary>
+	<Primary> -> <Identifier> | <Integer> | <Identifier> ( <IDs> ) | ( <Expression> ) | <Real> | true | false
+
+Token: Operator       Lexeme:   +                   
+	<Empty> -> Epsilon
+	<TermPrime> -> * <Factor> <TermPrime> | / <Factor> <TermPrime> | <Empty>
+	<Empty> -> Epsilon
+	<ExpressionPrime> -> + <Term> <ExpressionPrime> | - <Term> <ExpressionPrime> | <Empty>   
+
+Token: Identifier     Lexeme:   b                   
+	<Term> -> <Factor> <TermPrime>
+	<Factor> -> - <Primary> | <Primary>
+	<Primary> -> <Identifier> | <Integer> | <Identifier> ( <IDs> ) | ( <Expression> ) | <Real> | true | false
+
+Token: Operator       Lexeme:   ;                   
+	<Empty> -> Epsilon
+	<TermPrime> -> * <Factor> <TermPrime> | / <Factor> <TermPrime> | <Empty>
+	<Empty> -> Epsilon
+	<ExpressionPrime> -> + <Term> <ExpressionPrime> | - <Term> <ExpressionPrime> | <Empty>   
+	<Empty> -> Epsilon
+
+Token: Identifier     Lexeme:   z                   
+	<Statement> -> <Compound> | <Assign> | <If> | <Return> | <Print> | <Scan> | <While> 
+	<Assign> -> <Identifier> = <Expression>;
+
+Token: Operator       Lexeme:   =                   
+
+Token: Identifier     Lexeme:   c                   
+	<Expression> -> <Term> <ExpressionPrime>
+	<Term> -> <Factor> <TermPrime>
+	<Factor> -> - <Primary> | <Primary>
+	<Primary> -> <Identifier> | <Integer> | <Identifier> ( <IDs> ) | ( <Expression> ) | <Real> | true | false
+
+Token: Operator       Lexeme:   +                   
+	<Empty> -> Epsilon
+	<TermPrime> -> * <Factor> <TermPrime> | / <Factor> <TermPrime> | <Empty>
+	<Empty> -> Epsilon
+	<ExpressionPrime> -> + <Term> <ExpressionPrime> | - <Term> <ExpressionPrime> | <Empty>   
+
+Token: Identifier     Lexeme:   d                   
+	<Term> -> <Factor> <TermPrime>
+	<Factor> -> - <Primary> | <Primary>
+	<Primary> -> <Identifier> | <Integer> | <Identifier> ( <IDs> ) | ( <Expression> ) | <Real> | true | false
+
+Token: Operator       Lexeme:   ;                   
+	<Empty> -> Epsilon
+	<TermPrime> -> * <Factor> <TermPrime> | / <Factor> <TermPrime> | <Empty>
+	<Empty> -> Epsilon
+	<ExpressionPrime> -> + <Term> <ExpressionPrime> | - <Term> <ExpressionPrime> | <Empty>   
+	<Empty> -> Epsilon
+
+Token: Identifier     Lexeme:   a                   
+	<Statement> -> <Compound> | <Assign> | <If> | <Return> | <Print> | <Scan> | <While> 
+	<Assign> -> <Identifier> = <Expression>;
+
+Token: Operator       Lexeme:   =                   
+
+Token: Identifier     Lexeme:   e                   
+	<Expression> -> <Term> <ExpressionPrime>
+	<Term> -> <Factor> <TermPrime>
+	<Factor> -> - <Primary> | <Primary>
+	<Primary> -> <Identifier> | <Integer> | <Identifier> ( <IDs> ) | ( <Expression> ) | <Real> | true | false
+
+Token: Operator       Lexeme:   -                   
+	<Empty> -> Epsilon
+	<TermPrime> -> * <Factor> <TermPrime> | / <Factor> <TermPrime> | <Empty>
+	<Empty> -> Epsilon
+	<ExpressionPrime> -> + <Term> <ExpressionPrime> | - <Term> <ExpressionPrime> | <Empty>   
+
+Token: Identifier     Lexeme:   f                   
+	<Term> -> <Factor> <TermPrime>
+	<Factor> -> - <Primary> | <Primary>
+	<Primary> -> <Identifier> | <Integer> | <Identifier> ( <IDs> ) | ( <Expression> ) | <Real> | true | false
+
+Token: Operator       Lexeme:   ;                   
+	<Empty> -> Epsilon
+	<TermPrime> -> * <Factor> <TermPrime> | / <Factor> <TermPrime> | <Empty>
+	<Empty> -> Epsilon
+	<ExpressionPrime> -> + <Term> <ExpressionPrime> | - <Term> <ExpressionPrime> | <Empty>   
+	<Empty> -> Epsilon
+
+Token: Identifier     Lexeme:   b                   
+	<Statement> -> <Compound> | <Assign> | <If> | <Return> | <Print> | <Scan> | <While> 
+	<Assign> -> <Identifier> = <Expression>;
+
+Token: Operator       Lexeme:   =                   
+
+Token: Identifier     Lexeme:   g                   
+	<Expression> -> <Term> <ExpressionPrime>
+	<Term> -> <Factor> <TermPrime>
+	<Factor> -> - <Primary> | <Primary>
+	<Primary> -> <Identifier> | <Integer> | <Identifier> ( <IDs> ) | ( <Expression> ) | <Real> | true | false
+
+Token: Operator       Lexeme:   *                   
+	<Empty> -> Epsilon
+	<TermPrime> -> * <Factor> <TermPrime> | / <Factor> <TermPrime> | <Empty>
+
+Token: Identifier     Lexeme:   n                   
+	<Factor> -> - <Primary> | <Primary>
+	<Primary> -> <Identifier> | <Integer> | <Identifier> ( <IDs> ) | ( <Expression> ) | <Real> | true | false
+
+Token: Operator       Lexeme:   ;                   
+	<Empty> -> Epsilon
+	<TermPrime> -> * <Factor> <TermPrime> | / <Factor> <TermPrime> | <Empty>
+	<Empty> -> Epsilon
+	<ExpressionPrime> -> + <Term> <ExpressionPrime> | - <Term> <ExpressionPrime> | <Empty>   
+	<Empty> -> Epsilon
+Finish.
+
+
+
+

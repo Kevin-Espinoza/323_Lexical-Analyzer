@@ -1,0 +1,43 @@
+Grammmar for CPSC323 - Anthony Le
+Assignment2:
+
+---For the 1st Iteration: single Declarative statement, Assignment statement and arithmatic expressions:
+<Statement> -> <Declarative>
+<Declarative> -> <Type> <id>
+
+<Statement> -> <Assign>
+<Assign> -> <ID> = <Expression>;
+
+<Expression> -> <Expression> + <Term> | <Expression> - <Term> | <Term>
+
+<Term> -> <Term> * <Factor> | <Term> / <Factor> | <Factor>
+
+<Factor> -> ( <Expression> ) | <ID> | <num> 
+
+<ID> -> id
+*the num rule is OPTIONAL
+
+
+---For the second iteration the multiple Declarative Grammar can be:
+Declarative type of statements:
+<Statement> -> <Declarative>
+<Declarative> -> <Type> <ID> <MoreIds>; | <empty>
+<Type> -> int | float | bool
+<MoreIds> -> , <ID> <MoreIds>| <empty>
+
+
+---For the 3rd Iteration the If-While Grammar can be:
+<Statement> -> <Assign>  |  <Declarative>
+		| if <Conditional> then <Statement> else <Statement> endif
+		| while <Conditional> do <Statement> whileend
+		| begin <Statement> <MoreStatements> end
+<MoreStatements> -> ; <Statement> <MoreStatements>| <empty>
+<Conditional> -> <Expression> <Relop> <Expression>| <Expression>
+<Relop> -> < | <= | == | <> | >= | > 
+
+---Multiple Declarative statements can be :
+<Statement> -> <Declarative>
+<Declarative> -> <Type> <ID> <MoreIds>; | <empty>
+<Type> -> int | float | bool
+<MoreIds> -> , <ID> <MoreIds>| <empty>
+
