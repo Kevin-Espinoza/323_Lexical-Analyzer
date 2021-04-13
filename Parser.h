@@ -23,8 +23,10 @@ private:
     Tokens tokens;
     std::string filename;
 	std::ifstream myReader;
+    std::vector<std::string> syntax;    // Vector will be filled in parse() - contains syntactical info for cout 
     std::vector<std::pair<std::string, std::pair<int, int>>> lexemes;
     std::vector<std::pair<std::string, std::pair<int, int>>>::iterator current;
+
 public:
     Parser();
     Parser(std::string filname);
@@ -141,6 +143,7 @@ void Parser::writeToFile(std::ofstream &token_separation)
     }
 }
 
+// This function will contain all the Lexer functions to properly separate all Tokens/Lexemes
 void Parser::lexer() 
 {
     // This file is where the tokens and lexemes will be printed
@@ -291,6 +294,21 @@ void Parser::lexer()
 
 void Parser::parse()
 {
+
+    // Fill the syntax vector with proper output terms
+    // NOTE: syntax was declared empty to keep code clean
+    // Reference for proper output for tokens
+    /*syntax[0]*/ this->syntax.push_back("<Statement List> -> <Statement> | <Statement> <Statement List>");
+    /*syntax[1]*/ this->syntax.push_back("<Statement> -> <Compound> | <Assign> | <If> | <Return> | <Print> | <Scan> | <While> ");
+    /*syntax[2]*/ this->syntax.push_back("<Assign> -> <Identifier> = <Expression>;");
+    /*syntax[3]*/ this->syntax.push_back("<Expression> -> <Term> <ExpressionPrime>");
+    /*syntax[4]*/ this->syntax.push_back("<Term> -> <Factor> <TermPrime>");
+    /*syntax[5]*/ this->syntax.push_back("<Factor> -> - <Primary> | <Primary>");
+    /*syntax[6]*/ this->syntax.push_back("<Primary> -> <Identifier> | <Integer> | <Identifier> ( <IDs> ) | ( <Expression> ) | <Real> | true | false");
+
+
+
+    // Begin parse()
     this->current = lexemes.begin();
     //current->second is category_and_id (second.first is category, second.second is id)
     while (this->current != this->lexemes.end()) {
@@ -308,7 +326,7 @@ void Parser::parse()
 }
 
 void Parser::Assignment() {
-    std::cout << "Assigment" << '\n';
+    std::cout << syntax[2] << '\n';
     if (this->current->second.first == Category::Identifers) {
         this->increment(2);
         this->Expression();
@@ -318,14 +336,16 @@ void Parser::Assignment() {
 
 }
 
+// TODO: +- and */ are different, make separate checks
+// TODO: print out strings that are close to the sample output 
 void Parser::Expression() {
-    std::cout << "Expression: " << this->current->first << '\n';
+    std::cout << syntax[3] << this->current->first << '\n';
     if (this->getNext()->first == "+" || this->getNext()->first == "-" || this->getNext()->first == "*") {
         std::cout << "Arithmetic: " << this->getNext()->first << '\n';
         this->increment(2);
         this->Expression();
     } else {
-        std::cout << "Term" << '\n';
+        std::cout << syntax[4] << '\n';
         if (this->current->second.first == Category::Identifers || 
             this->current->second.first == Category::Literals && 
             (this->current->second.second == Numbers::Integer || this->current->second.second == Numbers::Float) 
