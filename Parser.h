@@ -24,6 +24,7 @@ private:
     std::string filename;
 	std::ifstream myReader;
     std::vector<std::pair<std::string, std::pair<int, int>>> lexemes;
+    std::vector<std::pair<std::string, std::pair<int, int>>>::iterator current;
 public:
     Parser();
     Parser(std::string filname);
@@ -33,6 +34,11 @@ public:
     bool check_if_digits(std::string pattern);
     void writeToFile(std::ofstream &token_separation);
     void lexer();
+    void parse();
+    void Assignment();
+    void Expression();
+    std::vector<std::pair<std::string, std::pair<int, int>>>::iterator getNext();
+    void increment(int n);
 };
 
 Parser::Parser() 
@@ -281,4 +287,71 @@ void Parser::lexer()
 
 	else std::cerr << "Unable to open file";
 
+}
+
+void Parser::parse()
+{
+    this->current = lexemes.begin();
+    //current->second is category_and_id (second.first is category, second.second is id)
+    while (this->current != this->lexemes.end()) {
+        if (this->getNext()->first == "=") {
+            this->Assignment();
+        } else {
+            this->increment(1);
+        }
+
+        
+
+
+    }
+
+}
+
+void Parser::Assignment() {
+    std::cout << "Assigment" << '\n';
+    if (this->current->second.first == Category::Identifers) {
+        this->increment(2);
+        this->Expression();
+    } else {
+        std::cerr << "Error:: Assignment must begin with identifier";
+    }
+
+}
+
+void Parser::Expression() {
+    std::cout << "Expression: " << this->current->first << '\n';
+    if (this->getNext()->first == "+" || this->getNext()->first == "-" || this->getNext()->first == "*") {
+        std::cout << "Arithmetic: " << this->getNext()->first << '\n';
+        this->increment(2);
+        this->Expression();
+    } else {
+        std::cout << "Term" << '\n';
+        if (this->current->second.first == Category::Identifers || 
+            this->current->second.first == Category::Literals && 
+            (this->current->second.second == Numbers::Integer || this->current->second.second == Numbers::Float) 
+            ) 
+        {
+            
+        } else {
+            std::cerr << "Invalid term!" << '\n';
+        }
+    }
+}
+
+std::vector<std::pair<std::string, std::pair<int, int>>>::iterator Parser::getNext()
+{
+    if (this->current != this->lexemes.end()) {
+        return std::next(this->current);
+    }
+    else {
+        return this->lexemes.end();
+    }
+
+}
+
+void Parser::increment(int n) {
+    while (n > 0) {
+        this->current = std::next(this->current);
+        n--;
+    }
 }

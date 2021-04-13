@@ -34,6 +34,7 @@ int main(int argc, char *argv[])
 
     // Begin lexical analysis
     parser.lexer();
+    parser.parse();
 
     return 0;
 }
