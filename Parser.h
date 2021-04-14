@@ -37,10 +37,15 @@ public:
     void writeToFile(std::ofstream &token_separation);
     void lexer();
     void parse();
-    void Assignment();
+    void StatementList();
+    void Statement();
     void Expression();
+    void Assignment();
+    void ExpressionPrime();
+    void Term();
     std::vector<std::pair<std::string, std::pair<int, int>>>::iterator getNext();
     void increment(int n);
+    void printLexeme();
 };
 
 Parser::Parser() 
@@ -186,7 +191,7 @@ void Parser::lexer()
                 }
                 switch (parser_state) {
                     case PARSER_DEFAULT:
-                        if (input[i] != ' ' && input[i] != '\t' && input[i] != '\n') 
+                        if (input[i] != ' ' && input[i] != '\t' && input[i] != '\n' && input[i] != '\r' && input[i] != '\0') 
                         {
                             if (input[i] == '!') 
                             {
@@ -298,53 +303,100 @@ void Parser::parse()
     // Fill the syntax vector with proper output terms
     // NOTE: syntax was declared empty to keep code clean
     // Reference for proper output for tokens
-    /*syntax[0]*/ this->syntax.push_back("<Statement List> -> <Statement> | <Statement> <Statement List>");
-    /*syntax[1]*/ this->syntax.push_back("<Statement> -> <Compound> | <Assign> | <If> | <Return> | <Print> | <Scan> | <While> ");
-    /*syntax[2]*/ this->syntax.push_back("<Assign> -> <Identifier> = <Expression>;");
-    /*syntax[3]*/ this->syntax.push_back("<Expression> -> <Term> <ExpressionPrime>");
-    /*syntax[4]*/ this->syntax.push_back("<Term> -> <Factor> <TermPrime>");
-    /*syntax[5]*/ this->syntax.push_back("<Factor> -> - <Primary> | <Primary>");
-    /*syntax[6]*/ this->syntax.push_back("<Primary> -> <Identifier> | <Integer> | <Identifier> ( <IDs> ) | ( <Expression> ) | <Real> | true | false");
+    /*syntax[0]*/ this->syntax.push_back("\t<Statement List> -> <Statement> | <Statement> <Statement List>");
+    /*syntax[1]*/ this->syntax.push_back("\t<Statement> -> <Compound> | <Assign> | <If> | <Return> | <Print> | <Scan> | <While> ");
+    /*syntax[2]*/ this->syntax.push_back("\t<Assign> -> <Identifier> = <Expression>;");
+    /*syntax[3]*/ this->syntax.push_back("\t<Expression> -> <Term> <ExpressionPrime>");
+    /*syntax[4]*/ this->syntax.push_back("\t<Term> -> <Factor> <TermPrime>");
+    /*syntax[5]*/ this->syntax.push_back("\t<Factor> -> - <Primary> | <Primary>");
+    /*syntax[6]*/ this->syntax.push_back("\t<Primary> -> <Identifier> | <Integer> | <Identifier> ( <IDs> ) | ( <Expression> ) | <Real> | true | false");
 
 
 
     // Begin parse()
     this->current = lexemes.begin();
     //current->second is category_and_id (second.first is category, second.second is id)
-    while (this->current != this->lexemes.end()) {
-        if (this->getNext()->first == "=") {
-            this->Assignment();
-        } else {
-            this->increment(1);
-        }
 
-        
-
-
+    if (this->current->second.first == Category::Identifers ||
+        this->current->second.first == Category::Keywords) 
+    {
+        this->printLexeme();
+        std::cout << syntax[0] << '\n';
+        this->StatementList();
     }
 
 }
 
-void Parser::Assignment() {
-    std::cout << syntax[2] << '\n';
-    if (this->current->second.first == Category::Identifers) {
-        this->increment(2);
-        this->Expression();
-    } else {
-        std::cerr << "Error:: Assignment must begin with identifier";
+void Parser::StatementList() {
+    while (this->current != this->lexemes.end()) { 
+        std::cout << syntax[1] << '\n';
+        this->Statement();
+        this->increment(1);
+        this->printLexeme();
     }
 
+}
+
+void Parser::Statement() {
+    while (this->current->first != "}" && this->current->first != ";") {
+        if (this->getNext()->first == "=") {
+            std::cout << syntax[2] << '\n';
+            this->Assignment();
+        } else if ( 
+            this->current->first == "if" || 
+            this->current->first == "else" ||
+            this->current->first == "while" ||
+            this->current->first == "do" ||
+            this->current->first == "for" ) 
+        {
+            this->Expression();
+        }
+        this->increment(1);
+    }
+    this->printLexeme();
 }
 
 // TODO: +- and */ are different, make separate checks
 // TODO: print out strings that are close to the sample output 
 void Parser::Expression() {
-    std::cout << syntax[3] << this->current->first << '\n';
-    if (this->getNext()->first == "+" || this->getNext()->first == "-" || this->getNext()->first == "*") {
-        std::cout << "Arithmetic: " << this->getNext()->first << '\n';
-        this->increment(2);
+    this->printLexeme();
+    std::cout << syntax[3] << '\n';
+    this->Term();
+    this->increment(1);
+    this->ExpressionPrime();
+}
+
+void Parser::Assignment() {
+    if (this->current->second.first == Category::Identifers) {
+        this->increment(1);
+        this->printLexeme();
+        this->increment(1);
         this->Expression();
+
     } else {
+        std::cerr << "Error:: Assignment must begin with identifier";
+        exit(1);
+    }
+
+}
+
+void Parser::ExpressionPrime() {
+
+    if (this->current->first == "+" || this->current->first == "-" || this->current->first == "*") {
+        this->printLexeme();
+        this->increment(1);
+        // this->printLexeme();
+        this->Term();
+        this->ExpressionPrime();
+    } else {
+        this->printLexeme();
+        this->Term();
+    }
+
+}
+
+void Parser::Term() {
+        // this->printLexeme();
         std::cout << syntax[4] << '\n';
         if (this->current->second.first == Category::Identifers || 
             this->current->second.first == Category::Literals && 
@@ -354,8 +406,8 @@ void Parser::Expression() {
             
         } else {
             std::cerr << "Invalid term!" << '\n';
+            exit(1);
         }
-    }
 }
 
 std::vector<std::pair<std::string, std::pair<int, int>>>::iterator Parser::getNext()
@@ -374,4 +426,8 @@ void Parser::increment(int n) {
         this->current = std::next(this->current);
         n--;
     }
+}
+
+void Parser::printLexeme() {
+    std::cout << "\nToken:\t" << tokens.categories[this->current->second.first] << "\tLexeme:\t" << this->current->first << '\n';
 }
