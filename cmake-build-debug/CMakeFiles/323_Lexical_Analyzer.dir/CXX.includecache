@@ -1,0 +1,34 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/mnt/c/Users/mjlam/School/323_Lexical-Analyzer/Parser.h
+Tokens.h
+/mnt/c/Users/mjlam/School/323_Lexical-Analyzer/Tokens.h
+State.h
+/mnt/c/Users/mjlam/School/323_Lexical-Analyzer/State.h
+fstream
+-
+iostream
+-
+iomanip
+-
+vector
+-
+
+/mnt/c/Users/mjlam/School/323_Lexical-Analyzer/State.h
+
+/mnt/c/Users/mjlam/School/323_Lexical-Analyzer/Tokens.h
+string
+-
+unordered_map
+-
+
+/mnt/c/Users/mjlam/School/323_Lexical-Analyzer/main.cpp
+Parser.h
+/mnt/c/Users/mjlam/School/323_Lexical-Analyzer/Parser.h
+
