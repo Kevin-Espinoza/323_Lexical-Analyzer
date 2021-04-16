@@ -7,7 +7,7 @@ enum Category {
     Separators = 0,
     Operators,
     Keywords,
-    Identifers,
+    Identifiers,
     Literals 
 } category;
 
