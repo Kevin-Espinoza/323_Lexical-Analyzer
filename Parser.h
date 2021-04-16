@@ -26,6 +26,7 @@ private:
     std::vector<std::string> syntax;    // Vector will be filled in parse() - contains syntactical info for cout 
     std::vector<std::pair<std::string, std::pair<int, int>>> lexemes;
     std::vector<std::pair<std::string, std::pair<int, int>>>::iterator current;
+    bool printFlag;
 
 public:
     Parser();
@@ -39,12 +40,14 @@ public:
     void parse();
     void StatementList();
     void Statement();
+    void Conditional();
     void Expression();
     void Assignment();
     void ExpressionPrime();
     void Term();
     void TermPrime();
     void Factor();
+    void Declarative();
     void Num();
     std::vector<std::pair<std::string, std::pair<int, int>>>::iterator getNext();
     void increment(int n);
@@ -74,7 +77,7 @@ std::pair<int, int> Parser::match_pattern(std::string pattern) {
     {
         // This has no fail value for undefined identifiers, because we are not there yet.
         auto it = this->tokens.identifiers.find(pattern);
-        category_and_id.first = Category::Identifers;
+        category_and_id.first = Category::Identifiers;
         if (it != this->tokens.identifiers.end()) 
         {
             category_and_id.second = it->second;
@@ -315,6 +318,7 @@ void Parser::parse()
     /*syntax[6]*/ this->syntax.push_back("\t<Statement> -> <Declarative>");
     /*syntax[7]*/ this->syntax.push_back("\t<Declarative> -> <Type> <ID>");
     /*syntax[8]*/ this->syntax.push_back("\t<Type> -> bool | float | int");
+    /*syntax[9]*/ this->syntax.push_back("\t<Conditional> -> <Expression> <Relop> <Expression> | <Expression>");
 
 
 
@@ -339,30 +343,102 @@ void Parser::Statement() {
             this->printLexeme();
             std::cout << syntax[4] << '\n';
             this->Assignment();
-        } else if (
-            this->current->first == "if" ||
-            this->current->first == "else" ||
-            this->current->first == "while" ||
-            this->current->first == "do" ||
-            this->current->first == "for" )
+        } else if (this->current->second.first == Category::Keywords && this->current->second.second <= 2){
+            this->printLexeme();
+            std::cout << syntax[6] << '\n';
+            this->Declarative();
+        } else if (this->current->first == "(")
         {
             this->Expression();
+        } else if (this->current->first == ")") {
+            this->increment(1);
+        } else if (this->current->first == "if" || this->current->first == "while") {
+            // print the if/while
+            this->printLexeme();
+            this->increment(1);
+            this->Conditional();
+            if (this->current->first == "{") {
+                this->printLexeme();
+                std::cout << "Began code block\n";
+                this->increment(1);
+            } else {
+                std::cerr << "Expected {\n";
+                exit(1);
+            }
         }
     }
 //    this->increment(1);
     this->printLexeme();
 }
 
-// TODO: +- and */ are different, make separate checks
-// TODO: print out strings that are close to the sample output
+void Parser::Conditional() {
+    std::cout << syntax[9] << '\n';
+    // check for opening parenthesis
+    if (this->current->first == "(") {
+        this->printLexeme();
+        this->increment(1);
+    }
+    this->Expression();
+    this->increment(1);
+    // check for relational operator
+    if (this->current->first == "<" || this->current->first == ">") {
+        this->printLexeme();
+        std::cout << "<RELOP>\n";
+        this->increment(1);
+        if (this->current->first == "=") {
+            this->printLexeme();
+            std::cout << "<RELOP>\n";
+            this->increment(1);
+        }
+        this->Expression();
+        this->increment(1);
+    } else if (this->current->first == "=" && this->getNext()->first == "=") {
+        this->printLexeme();
+        std::cout << "<RELOP>\n";
+        this->increment(1);
+        this->printLexeme();
+        std::cout << "<RELOP>\n";
+        this->increment(1);
+        this->Expression();
+        this->increment(1);
+    }
+    // check for closing parenthesis
+    if (this->current->first == ")") {
+        this->printLexeme();
+        this->increment(1);
+    } else {
+        std::cerr << "Expected closing parenthesis\n";
+        exit(1);
+    }
+}
+
+    void Parser::Declarative() {
+        std::cout << syntax[7] << '\n';
+        std::cout << syntax[8] << '\n';
+    if (this->getNext()->second.first == Category::Identifiers) {
+        this->increment(1);
+        this->printLexeme();
+        if (this->getNext()->first != "=") {
+            this->increment(1);
+        }
+    } else {
+        std::cerr << "Expected valid identifier\n";
+    }
+
+}
 
 void Parser::Assignment() {
     std::cout << syntax[5] << '\n';
-    if (this->current->second.first == Category::Identifers) {
+    if (this->current->second.first == Category::Identifiers) {
         this->increment(1);
         this->printLexeme();
         this->increment(1);
-        this->Expression();
+        if (this->getNext()->first == ";") {
+            this->Expression();
+            this->increment(1);
+        } else {
+            this->Expression();
+        }
 
     } else {
         std::cerr << "Error:: Assignment must begin with identifier.\n";
@@ -420,9 +496,9 @@ void Parser::TermPrime() {
 void Parser::Factor() {
         // this->printLexeme();
         std::cout << syntax[2] << '\n';
-        if (this->current->second.first == Category::Identifers)
+        if (this->current->second.first == Category::Identifiers)
         {
-
+            std::cout << syntax[3] << '\n';
         } else if (this->current->second.first == Category::Literals) {
             if (this->current->second.second == Numbers::Integer || this->current->second.second == Numbers::Float) {
 
@@ -433,10 +509,11 @@ void Parser::Factor() {
         else if (this->current->first == "(") {
             this->increment(1);
             this->Expression();
-            this->increment(1);
             if (this->current->first != ")") {
                 std::cerr << "Expected \")\"\n";
                 exit(1);
+            } else {
+                this->printLexeme();
             }
         } else {
             std::cerr << "Expected Identifier, number or parenthetical expression.\n";
@@ -465,6 +542,7 @@ std::vector<std::pair<std::string, std::pair<int, int>>>::iterator Parser::getNe
 }
 
 void Parser::increment(int n) {
+    this->printFlag = false;
     while (n > 0) {
         this->current = std::next(this->current);
         n--;
@@ -476,5 +554,8 @@ void Parser::increment(int n) {
 }
 
 void Parser::printLexeme() {
-    std::cout << "\nToken:\t" << tokens.categories[this->current->second.first] << "\tLexeme:\t" << this->current->first << '\n';
+    if (!this->printFlag) {
+        std::cout << "\nToken:\t" << tokens.categories[this->current->second.first] << "\tLexeme:\t" << this->current->first << '\n';
+        this->printFlag = true;
+    }
 }

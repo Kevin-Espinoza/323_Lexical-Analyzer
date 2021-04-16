@@ -34,6 +34,7 @@ int main(int argc, char *argv[])
 
     // Begin lexical analysis
     parser.lexer();
+    // Begin syntax analysis
     parser.parse();
 
     return 0;
