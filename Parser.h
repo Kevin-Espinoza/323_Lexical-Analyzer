@@ -27,6 +27,7 @@ private:
     std::vector<std::pair<std::string, std::pair<int, int>>> lexemes;
     std::vector<std::pair<std::string, std::pair<int, int>>>::iterator current;
     bool printFlag;
+    std::ofstream parser_output;
 
 public:
     Parser();
@@ -52,11 +53,12 @@ public:
     std::vector<std::pair<std::string, std::pair<int, int>>>::iterator getNext();
     void increment(int n);
     void printLexeme();
+    void printRule(int i);
 };
 
 Parser::Parser() 
 {
-    this->filename = "Lex_test1.txt";
+    this->filename = "sample_input.txt";
 }
 
 Parser::Parser(std::string filename) 
@@ -305,6 +307,7 @@ void Parser::lexer()
 
 void Parser::parse()
 {
+    this->parser_output.open("parser_output.txt");
 
     // Fill the syntax vector with proper output terms
     // NOTE: syntax was declared empty to keep code clean
@@ -319,7 +322,8 @@ void Parser::parse()
     /*syntax[7]*/ this->syntax.push_back("\t<Declarative> -> <Type> <ID>");
     /*syntax[8]*/ this->syntax.push_back("\t<Type> -> bool | float | int");
     /*syntax[9]*/ this->syntax.push_back("\t<Conditional> -> <Expression> <Relop> <Expression> | <Expression>");
-
+    /*syntax[10]*/this->syntax.push_back("Began code block\n");
+    /*syntax[11]*/this->syntax.push_back("<RELOP>\n");
 
 
     // Begin parse()
@@ -341,11 +345,11 @@ void Parser::Statement() {
     while (this->current->first != "}" && this->current->first != ";") {
         if (this->getNext()->first == "=") {
             this->printLexeme();
-            std::cout << syntax[4] << '\n';
+            this->printRule(4);
             this->Assignment();
         } else if (this->current->second.first == Category::Keywords && this->current->second.second <= 2){
             this->printLexeme();
-            std::cout << syntax[6] << '\n';
+            this->printRule(6);
             this->Declarative();
         } else if (this->current->first == "(")
         {
@@ -359,7 +363,7 @@ void Parser::Statement() {
             this->Conditional();
             if (this->current->first == "{") {
                 this->printLexeme();
-                std::cout << "Began code block\n";
+                this->printRule(10);
                 this->increment(1);
             } else {
                 std::cerr << "Expected {\n";
@@ -372,7 +376,7 @@ void Parser::Statement() {
 }
 
 void Parser::Conditional() {
-    std::cout << syntax[9] << '\n';
+    this->printRule(9);
     // check for opening parenthesis
     if (this->current->first == "(") {
         this->printLexeme();
@@ -383,21 +387,21 @@ void Parser::Conditional() {
     // check for relational operator
     if (this->current->first == "<" || this->current->first == ">") {
         this->printLexeme();
-        std::cout << "<RELOP>\n";
+        this->printRule(11);
         this->increment(1);
         if (this->current->first == "=") {
             this->printLexeme();
-            std::cout << "<RELOP>\n";
+            this->printRule(11);
             this->increment(1);
         }
         this->Expression();
         this->increment(1);
     } else if (this->current->first == "=" && this->getNext()->first == "=") {
         this->printLexeme();
-        std::cout << "<RELOP>\n";
+        this->printRule(11);
         this->increment(1);
         this->printLexeme();
-        std::cout << "<RELOP>\n";
+        this->printRule(11);
         this->increment(1);
         this->Expression();
         this->increment(1);
@@ -413,8 +417,8 @@ void Parser::Conditional() {
 }
 
     void Parser::Declarative() {
-        std::cout << syntax[7] << '\n';
-        std::cout << syntax[8] << '\n';
+        this->printRule(7);
+        this->printRule(8);
     if (this->getNext()->second.first == Category::Identifiers) {
         this->increment(1);
         this->printLexeme();
@@ -428,7 +432,7 @@ void Parser::Conditional() {
 }
 
 void Parser::Assignment() {
-    std::cout << syntax[5] << '\n';
+    this->printRule(5);
     if (this->current->second.first == Category::Identifiers) {
         this->increment(1);
         this->printLexeme();
@@ -449,7 +453,7 @@ void Parser::Assignment() {
 
 void Parser::Expression() {
     this->printLexeme();
-    std::cout << syntax[0] << '\n';
+    this->printRule(0);
     this->Term();
     if (this->getNext()->first == "+" || this->getNext()->first == "-") {
         this->increment(1);
@@ -471,7 +475,7 @@ void Parser::ExpressionPrime() {
 
 void Parser::Term() {
 //    this->printLexeme();
-    std::cout << syntax[1] << '\n';
+    this->printRule(1);
     this->Factor();
     if (this->getNext()->first == "*" || this->getNext()->first == "/") {
         this->increment(1);
@@ -495,10 +499,10 @@ void Parser::TermPrime() {
 //    /*syntax[2]*/ this->syntax.push_back("\t<Factor> -> ( <Expression> ) | <ID> | <Num>");
 void Parser::Factor() {
         // this->printLexeme();
-        std::cout << syntax[2] << '\n';
+        this->printRule(2);
         if (this->current->second.first == Category::Identifiers)
         {
-            std::cout << syntax[3] << '\n';
+            this->printRule(3);
         } else if (this->current->second.first == Category::Literals) {
             if (this->current->second.second == Numbers::Integer || this->current->second.second == Numbers::Float) {
 
@@ -553,9 +557,15 @@ void Parser::increment(int n) {
     }
 }
 
+void Parser::printRule(int i) {
+    std::cout << syntax[i] << '\n';
+    this->parser_output << syntax[i] << '\n';
+}
+
 void Parser::printLexeme() {
     if (!this->printFlag) {
         std::cout << "\nToken:\t" << tokens.categories[this->current->second.first] << "\tLexeme:\t" << this->current->first << '\n';
+        this->parser_output << "\nToken:\t" << tokens.categories[this->current->second.first] << "\tLexeme:\t" << this->current->first << '\n';
         this->printFlag = true;
     }
 }

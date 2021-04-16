@@ -1,0 +1,225 @@
+
+Token:	KEYWORD		Lexeme:	int
+	<Statement> -> <Declarative>
+	<Declarative> -> <Type> <ID>
+	<Type> -> bool | float | int
+
+Token:	IDENTIFIER	Lexeme:	a
+
+Token:	SEPARATOR	Lexeme:	;
+
+Token:	KEYWORD		Lexeme:	int
+	<Statement> -> <Declarative>
+	<Declarative> -> <Type> <ID>
+	<Type> -> bool | float | int
+
+Token:	IDENTIFIER	Lexeme:	x
+	<Statement> -> <Assign>
+	<Assign> -> <ID> = <Expression>;
+
+Token:	OPERATOR	Lexeme:	=
+
+Token:	SEPARATOR	Lexeme:	(
+	<Expression> -> <Expression> + <Term> | <Expression> - <Term> | <Term>
+	<Term> -> <Term> * <Factor> | <Term> / <Factor> | <Factor>
+	<Factor> -> ( <Expression> ) | <ID> | <Num>
+
+Token:	IDENTIFIER	Lexeme:	a
+	<Expression> -> <Expression> + <Term> | <Expression> - <Term> | <Term>
+	<Term> -> <Term> * <Factor> | <Term> / <Factor> | <Factor>
+	<Factor> -> ( <Expression> ) | <ID> | <Num>
+	<ID> -> id
+
+Token:	OPERATOR	Lexeme:	+
+
+Token:	IDENTIFIER	Lexeme:	b
+	<Term> -> <Term> * <Factor> | <Term> / <Factor> | <Factor>
+	<Factor> -> ( <Expression> ) | <ID> | <Num>
+	<ID> -> id
+
+Token:	SEPARATOR	Lexeme:	)
+
+Token:	OPERATOR	Lexeme:	-
+
+Token:	IDENTIFIER	Lexeme:	e
+	<Term> -> <Term> * <Factor> | <Term> / <Factor> | <Factor>
+	<Factor> -> ( <Expression> ) | <ID> | <Num>
+	<ID> -> id
+
+Token:	SEPARATOR	Lexeme:	;
+
+Token:	KEYWORD		Lexeme:	float
+	<Statement> -> <Declarative>
+	<Declarative> -> <Type> <ID>
+	<Type> -> bool | float | int
+
+Token:	IDENTIFIER	Lexeme:	z
+	<Statement> -> <Assign>
+	<Assign> -> <ID> = <Expression>;
+
+Token:	OPERATOR	Lexeme:	=
+
+Token:	IDENTIFIER	Lexeme:	c
+	<Expression> -> <Expression> + <Term> | <Expression> - <Term> | <Term>
+	<Term> -> <Term> * <Factor> | <Term> / <Factor> | <Factor>
+	<Factor> -> ( <Expression> ) | <ID> | <Num>
+	<ID> -> id
+
+Token:	OPERATOR	Lexeme:	/
+
+Token:	IDENTIFIER	Lexeme:	d
+	<Factor> -> ( <Expression> ) | <ID> | <Num>
+	<ID> -> id
+
+Token:	SEPARATOR	Lexeme:	;
+
+Token:	IDENTIFIER	Lexeme:	a
+	<Statement> -> <Assign>
+	<Assign> -> <ID> = <Expression>;
+
+Token:	OPERATOR	Lexeme:	=
+
+Token:	IDENTIFIER	Lexeme:	e
+	<Expression> -> <Expression> + <Term> | <Expression> - <Term> | <Term>
+	<Term> -> <Term> * <Factor> | <Term> / <Factor> | <Factor>
+	<Factor> -> ( <Expression> ) | <ID> | <Num>
+	<ID> -> id
+
+Token:	OPERATOR	Lexeme:	-
+
+Token:	SEPARATOR	Lexeme:	(
+	<Term> -> <Term> * <Factor> | <Term> / <Factor> | <Factor>
+	<Factor> -> ( <Expression> ) | <ID> | <Num>
+
+Token:	IDENTIFIER	Lexeme:	f
+	<Expression> -> <Expression> + <Term> | <Expression> - <Term> | <Term>
+	<Term> -> <Term> * <Factor> | <Term> / <Factor> | <Factor>
+	<Factor> -> ( <Expression> ) | <ID> | <Num>
+	<ID> -> id
+
+Token:	OPERATOR	Lexeme:	+
+
+Token:	IDENTIFIER	Lexeme:	z
+	<Term> -> <Term> * <Factor> | <Term> / <Factor> | <Factor>
+	<Factor> -> ( <Expression> ) | <ID> | <Num>
+	<ID> -> id
+
+Token:	SEPARATOR	Lexeme:	)
+
+Token:	SEPARATOR	Lexeme:	;
+
+Token:	IDENTIFIER	Lexeme:	b
+	<Statement> -> <Assign>
+	<Assign> -> <ID> = <Expression>;
+
+Token:	OPERATOR	Lexeme:	=
+
+Token:	IDENTIFIER	Lexeme:	g
+	<Expression> -> <Expression> + <Term> | <Expression> - <Term> | <Term>
+	<Term> -> <Term> * <Factor> | <Term> / <Factor> | <Factor>
+	<Factor> -> ( <Expression> ) | <ID> | <Num>
+	<ID> -> id
+
+Token:	OPERATOR	Lexeme:	*
+
+Token:	IDENTIFIER	Lexeme:	n
+	<Factor> -> ( <Expression> ) | <ID> | <Num>
+	<ID> -> id
+
+Token:	SEPARATOR	Lexeme:	;
+
+Token:	IDENTIFIER	Lexeme:	a
+	<Statement> -> <Assign>
+	<Assign> -> <ID> = <Expression>;
+
+Token:	OPERATOR	Lexeme:	=
+
+Token:	IDENTIFIER	Lexeme:	b
+	<Expression> -> <Expression> + <Term> | <Expression> - <Term> | <Term>
+	<Term> -> <Term> * <Factor> | <Term> / <Factor> | <Factor>
+	<Factor> -> ( <Expression> ) | <ID> | <Num>
+	<ID> -> id
+
+Token:	OPERATOR	Lexeme:	+
+
+Token:	IDENTIFIER	Lexeme:	c
+	<Term> -> <Term> * <Factor> | <Term> / <Factor> | <Factor>
+	<Factor> -> ( <Expression> ) | <ID> | <Num>
+	<ID> -> id
+
+Token:	SEPARATOR	Lexeme:	;
+
+Token:	KEYWORD		Lexeme:	bool
+	<Statement> -> <Declarative>
+	<Declarative> -> <Type> <ID>
+	<Type> -> bool | float | int
+
+Token:	IDENTIFIER	Lexeme:	flag
+
+Token:	SEPARATOR	Lexeme:	;
+
+Token:	KEYWORD		Lexeme:	if
+	<Conditional> -> <Expression> <Relop> <Expression> | <Expression>
+
+Token:	SEPARATOR	Lexeme:	(
+
+Token:	IDENTIFIER	Lexeme:	flag
+	<Expression> -> <Expression> + <Term> | <Expression> - <Term> | <Term>
+	<Term> -> <Term> * <Factor> | <Term> / <Factor> | <Factor>
+	<Factor> -> ( <Expression> ) | <ID> | <Num>
+	<ID> -> id
+
+Token:	SEPARATOR	Lexeme:	)
+
+Token:	SEPARATOR	Lexeme:	{
+Began code block
+
+
+Token:	IDENTIFIER	Lexeme:	a
+	<Statement> -> <Assign>
+	<Assign> -> <ID> = <Expression>;
+
+Token:	OPERATOR	Lexeme:	=
+
+Token:	IDENTIFIER	Lexeme:	d
+	<Expression> -> <Expression> + <Term> | <Expression> - <Term> | <Term>
+	<Term> -> <Term> * <Factor> | <Term> / <Factor> | <Factor>
+	<Factor> -> ( <Expression> ) | <ID> | <Num>
+	<ID> -> id
+
+Token:	SEPARATOR	Lexeme:	;
+
+Token:	SEPARATOR	Lexeme:	}
+
+Token:	KEYWORD		Lexeme:	while
+	<Conditional> -> <Expression> <Relop> <Expression> | <Expression>
+
+Token:	SEPARATOR	Lexeme:	(
+
+Token:	IDENTIFIER	Lexeme:	a
+	<Expression> -> <Expression> + <Term> | <Expression> - <Term> | <Term>
+	<Term> -> <Term> * <Factor> | <Term> / <Factor> | <Factor>
+	<Factor> -> ( <Expression> ) | <ID> | <Num>
+	<ID> -> id
+
+Token:	OPERATOR	Lexeme:	=
+<RELOP>
+
+
+Token:	OPERATOR	Lexeme:	=
+<RELOP>
+
+
+Token:	IDENTIFIER	Lexeme:	b
+	<Expression> -> <Expression> + <Term> | <Expression> - <Term> | <Term>
+	<Term> -> <Term> * <Factor> | <Term> / <Factor> | <Factor>
+	<Factor> -> ( <Expression> ) | <ID> | <Num>
+	<ID> -> id
+
+Token:	SEPARATOR	Lexeme:	)
+
+Token:	SEPARATOR	Lexeme:	{
+Began code block
+
+
+Token:	SEPARATOR	Lexeme:	}
