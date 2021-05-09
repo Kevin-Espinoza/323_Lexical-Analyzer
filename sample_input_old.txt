@@ -1,0 +1,22 @@
+
+! this is comment for this sample test code for the assignment operator, the ; is optional!
+
+int a;
+int b;
+int c;
+int d;
+int e;
+int f;
+int z;
+int x= (a + b) - e;
+float z=c/ d;
+a=e- (f + z) ;
+b=g*n;
+a = b + c;
+bool flag;
+if (flag) {
+    a = d;
+}
+while (a == b) {
+
+}
