@@ -17,8 +17,9 @@
 #include <iomanip>
 #include <vector>
 #include <map>
+#include <stack>
 
-enum Instructions {
+    enum Instructions {
     POPM = 0,
     PUSHM,
     PUSHI,
@@ -26,7 +27,10 @@ enum Instructions {
     ADD,
     SUB,
     MULT,
-    DIV
+    DIV,
+    LES,
+    GRT,
+    JUMPZ
 } instructions;
 
 
@@ -34,10 +38,16 @@ enum Types {
     INTEGER = 0, FLOAT, BOOL
 } types;
 
+struct Instruction {
+    int address = 0;
+    std::string operation = "";
+    std::string operand = "";
+};
+
 class Parser {
 
 private:
-    std::string instruction_strings[8] = {"POPM\t", "PUSHM\t", "PUSHI\t", "POPI\t", "ADD\t", "SUB\t", "MULT\t", "DIV\t"};
+    std::string instruction_strings[11] = {"POPM\t", "PUSHM\t", "PUSHI\t", "POPI\t", "ADD\t", "SUB\t", "MULT\t", "DIV\t", "LES\t", "GRT\t", "JUMPZ\t"};
     std::string type_names[3] = {"integer", "float", "bool"};
     Tokens tokens;
     std::string filename;
@@ -50,13 +60,19 @@ private:
     std::map<std::string, std::pair<int, int>> symbol_table;
     int next_avail_memloc = 5000;
     std::vector<std::string> intermediate_code;
+    std::vector<Instruction> instr_table;
+    int instr_address = 1;
+    std::stack<int> jump_stack;
+    bool if_flag = false;
 
 public:
     Parser();
     Parser(std::string filename);
     void genInstr(int, int);
+    void genInstr(int);
     int getAddress(std::string);
     int getType(std::string);
+    void back_patch(int);
     std::pair<int, int> match_pattern(std::string);
     std::pair<int, int> match_pattern(char);
     bool check_if_digit(char current);
@@ -79,7 +95,7 @@ public:
     void increment(int n);
     void printLexeme();
     void printRule(int i);
-    void printInstructions(const std::vector<std::string> &intermediate_code);
+    void printInstructions();
     void printSymbolTable();
 };
 
@@ -106,18 +122,23 @@ int Parser::getAddress(std::string id) {
 }
 
 void Parser::genInstr(int instr_type, int val) {
-    std::string instr_str = this->instruction_strings[instr_type];
+    Instruction instruction;
+    instruction.operation = this->instruction_strings[instr_type];
     std::string operand = "";
-    if (instr_type == Instructions::ADD ||
-        instr_type == Instructions::SUB ||
-        instr_type == Instructions::MULT ||
-        instr_type == Instructions::DIV) {
-        operand = "nil";
-    } else {
-        operand = std::to_string(val);
-    }
-    std::string instruction = instr_str + operand + "\n";
-    this->intermediate_code.push_back(instruction);
+    operand = std::to_string(val);
+    instruction.operand = operand;
+    instruction.address = this->instr_address++;
+    this->instr_table.push_back(instruction);
+
+}
+
+void Parser::genInstr(int instr_type) {
+    Instruction instruction;
+    instruction.operation = this->instruction_strings[instr_type];
+    instruction.operand = "nil";
+    instruction.address = this->instr_address++;
+    this->instr_table.push_back(instruction);
+
 }
 
 int Parser::getType(std::string str) {
@@ -133,6 +154,12 @@ int Parser::getType(std::string str) {
         exit(1);
     }
     return type;
+}
+
+void Parser::back_patch(int jump_addr) {
+    int address = this->jump_stack.top();
+    this->jump_stack.pop();
+    this->instr_table[address - 1].operand = std::to_string(jump_addr);
 }
 
 std::pair<int, int> Parser::match_pattern(std::string pattern) {
@@ -400,7 +427,7 @@ void Parser::parse()
     this->current = lexemes.begin();
     //current->second is category_and_id (second.first is category, second.second is id)
     this->StatementList();
-    this->printInstructions(this->intermediate_code);
+    this->printInstructions();
     this->printSymbolTable();
 }
 
@@ -428,10 +455,22 @@ void Parser::Statement() {
         } else if (this->current->first == ")") {
             this->increment(1);
         } else if (this->current->first == "if" || this->current->first == "while") {
-            // print the if/while
+            this->Conditional();
+            if (this->current->first == "{") {
+                this->if_flag = true;
+                this->printLexeme();
+                this->printRule(10);
+                this->increment(1);
+            } else {
+                std::cerr << "Expected {\n";
+                exit(1);
+            }
+        } else if (this->current->first == "else") {
             this->printLexeme();
             this->increment(1);
-            this->Conditional();
+            if (this->current->first == "if") {
+                this->Conditional();
+            }
             if (this->current->first == "{") {
                 this->printLexeme();
                 this->printRule(10);
@@ -442,11 +481,27 @@ void Parser::Statement() {
             }
         }
     }
+    if (this->current->first == "}" ) {
+        if (this->if_flag) {
+            this->back_patch(this->instr_address);
+            this->if_flag = false;
+        }
+        if (this->getNext()->first != "else") {
+            if (this->getNext()->first != "endif") {
+                std::cerr << "Error: Expected endif\n";
+                exit(1);
+            } else {
+                this->increment(1);
+            }
+        }
+    }
 //    this->increment(1);
     this->printLexeme();
 }
 
 void Parser::Conditional() {
+    this->printLexeme();
+    this->increment(1);
     this->printRule(9);
     // check for opening parenthesis
     if (this->current->first == "(") {
@@ -457,6 +512,7 @@ void Parser::Conditional() {
     this->increment(1);
     // check for relational operator
     if (this->current->first == "<" || this->current->first == ">") {
+        char op = this->current->first[0];
         this->printLexeme();
         this->printRule(11);
         this->increment(1);
@@ -467,6 +523,18 @@ void Parser::Conditional() {
         }
         this->Expression();
         this->increment(1);
+        switch (op) {
+            case '<':
+                this->genInstr(Instructions::LES);
+                break;
+            case '>':
+                this->genInstr(Instructions::GRT);
+                break;
+            default:
+                exit(1);
+        }
+        this->jump_stack.push(this->instr_address);
+        this->genInstr(Instructions::JUMPZ);
     } else if (this->current->first == "=" && this->getNext()->first == "=") {
         this->printLexeme();
         this->printRule(11);
@@ -570,9 +638,9 @@ void Parser::ExpressionPrime() {
         this->Term();
         this->increment(1);
         if (oper == "+") {
-            this->genInstr(Instructions::ADD, 0);
+            this->genInstr(Instructions::ADD);
         } else {
-            this->genInstr(Instructions::SUB, 0);
+            this->genInstr(Instructions::SUB);
         }
         this->ExpressionPrime();
     }
@@ -598,9 +666,9 @@ void Parser::TermPrime() {
         this->Factor();
         this->increment(1);
         if (oper == "*") {
-            this->genInstr(Instructions::MULT, 0);
+            this->genInstr(Instructions::MULT);
         } else {
-            this->genInstr(Instructions::DIV, 0);
+            this->genInstr(Instructions::DIV);
         }
         this->TermPrime();
     }
@@ -631,6 +699,9 @@ void Parser::Factor() {
             } else {
                 this->printLexeme();
             }
+        }
+        else if (this->current->first == "True" || this->current->first == "False") {
+            this->genInstr(Instructions::PUSHI, (int)(this->current->first == "True") );
         } else {
             std::cerr << "Expected Identifier, number or parenthetical expression.\n";
             exit(1);
@@ -682,17 +753,18 @@ void Parser::printLexeme() {
     }
 }
 
-void Parser::printInstructions(const std::vector<std::string> &intermediate_code) {
+void Parser::printInstructions() {
     std::cout << std::endl;
-    for (std::string instr_str : intermediate_code) {
-        std::cout << instr_str;
+    for (int i = 0; i < this->instr_table.size(); i++) {
+        Instruction instr = instr_table.at(i);
+        std::cout << std::to_string(instr.address) + "\t" + instr.operation + "\t" + instr.operand + "\n";
     }
     std::cout << std::endl;
 }
 
 void Parser::printSymbolTable() {
     std::cout << std::endl;
-    std::cout << std::setw(20) << "Identifier" << std::setw(20) << "MemoryLocation" << std::setw(20) << "Type\n";
+//    std::cout << std::setw(20) << "Something Else" << std::setw(20) << "MemoryLocation" << std::setw(20) << "Type\n";
     for (auto symbol : this->symbol_table) {
         std::cout << std::setw(20) << symbol.first << std::setw(20) << symbol.second.first << std::setw(20) << type_names[symbol.second.second] << "\n";
     }
