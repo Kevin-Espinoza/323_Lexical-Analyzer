@@ -5,7 +5,7 @@ nu2m = 15;
 bool hey;
 hey = True;
 hey = False;
-if(num > nu2m)
+if(num >= nu2m)
 {
 	large$ = num;
 }

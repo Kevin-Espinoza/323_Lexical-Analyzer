@@ -30,6 +30,9 @@
     DIV,
     LES,
     GRT,
+    EQU,
+    LEQ,
+    GEQ,
     JUMPZ,
     LABEL,
     JUMP,
@@ -51,10 +54,12 @@ struct Instruction {
 class Parser {
 
 private:
-    std::string instruction_strings[15] = {
+    std::string instruction_strings[18] = {
             "POPM\t", "PUSHM\t", "PUSHI\t", "POPI\t",
             "ADD\t\t", "SUB\t\t", "MULT\t", "DIV\t\t",
-            "LES\t\t", "GRT\t\t", "JUMPZ\t", "LABEL\t", "JUMP\t",
+            "LES\t\t", "GRT\t\t", "EQU\t\t",
+            "LEQ\t\t", "GEQ\t\t",
+            "JUMPZ\t", "LABEL\t", "JUMP\t",
             "STDOUT\t", "STDIN\t"};
     std::string type_names[3] = {"integer", "float", "bool"};
     Tokens tokens;
@@ -74,6 +79,8 @@ private:
     bool if_flag = false;
     bool while_flag = false;
     bool increment_flag = false;
+    bool else_flag = false;
+    bool orequal_flag = false;
 
 public:
     Parser();
@@ -522,7 +529,16 @@ void Parser::Statement() {
     }
     if (this->current->first == "}" ) {
         if (this->if_flag) {
+            int save = 0;
+            if (this->getNext() != this->lexemes.end()) {
+                if (this->getNext()->first == "else") {
+                    save = this->instr_address;
+                    this->genInstr(Instructions::JUMP);
+                    this->else_flag = true;
+                }
+            }
             this->back_patch(this->instr_address);
+            this->jump_stack.push(save);
             this->if_flag = false;
         }
         if (this->while_flag) {
@@ -536,6 +552,10 @@ void Parser::Statement() {
                     std::cerr << "Error: Expected endif\n";
                     exit(1);
                 } else {
+                    if (this->else_flag) {
+                        this->back_patch(this->instr_address);
+                        this->else_flag = false;
+                    }
                     this->increment(1);
                 }
             }
@@ -566,19 +586,29 @@ void Parser::Conditional() {
             this->printLexeme();
             this->printRule(11);
             this->increment(1);
+            this->orequal_flag = true;
         }
         this->Expression();
         this->increment(1);
         switch (op) {
             case '<':
-                this->genInstr(Instructions::LES);
+                if (this->orequal_flag) {
+                    this->genInstr(Instructions::LEQ);
+                } else {
+                    this->genInstr(Instructions::LES);
+                }
                 break;
             case '>':
-                this->genInstr(Instructions::GRT);
+                if (this->orequal_flag) {
+                    this->genInstr(Instructions::GEQ);
+                } else {
+                    this->genInstr(Instructions::GRT);
+                }
                 break;
             default:
                 exit(1);
         }
+        this->orequal_flag = false;
         this->jump_stack.push(this->instr_address);
         this->genInstr(Instructions::JUMPZ);
     } else if (this->current->first == "=" && this->getNext()->first == "=") {
@@ -590,6 +620,9 @@ void Parser::Conditional() {
         this->increment(1);
         this->Expression();
         this->increment(1);
+        this->genInstr(Instructions::EQU);
+        this->jump_stack.push(this->instr_address);
+        this->genInstr(Instructions::JUMPZ);
     }
     // check for closing parenthesis
     if (this->current->first == ")") {
