@@ -1,7 +1,10 @@
-! Find the sum between two numbers!
-int num, nu2m, sum;
-num = 0;
-nu2m = 15;
+! this is comment for this sample code for assignment 3 !
+int i, max, sum;
 sum = 0;
-sum = num + nu2m;
-
+i = 1;
+STDinput ( max);
+while (i < max) {
+sum = sum + i;
+i = i + 1;
+}
+STDoutput (sum + max);

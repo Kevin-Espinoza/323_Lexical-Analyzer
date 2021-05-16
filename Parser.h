@@ -30,7 +30,11 @@
     DIV,
     LES,
     GRT,
-    JUMPZ
+    JUMPZ,
+    LABEL,
+    JUMP,
+    STDOUT,
+    STDIN
 } instructions;
 
 
@@ -47,7 +51,11 @@ struct Instruction {
 class Parser {
 
 private:
-    std::string instruction_strings[11] = {"POPM\t", "PUSHM\t", "PUSHI\t", "POPI\t", "ADD\t", "SUB\t", "MULT\t", "DIV\t", "LES\t", "GRT\t", "JUMPZ\t"};
+    std::string instruction_strings[15] = {
+            "POPM\t", "PUSHM\t", "PUSHI\t", "POPI\t",
+            "ADD\t\t", "SUB\t\t", "MULT\t", "DIV\t\t",
+            "LES\t\t", "GRT\t\t", "JUMPZ\t", "LABEL\t", "JUMP\t",
+            "STDOUT\t", "STDIN\t"};
     std::string type_names[3] = {"integer", "float", "bool"};
     Tokens tokens;
     std::string filename;
@@ -64,6 +72,8 @@ private:
     int instr_address = 1;
     std::stack<int> jump_stack;
     bool if_flag = false;
+    bool while_flag = false;
+    bool increment_flag = false;
 
 public:
     Parser();
@@ -445,19 +455,48 @@ void Parser::Statement() {
             this->printLexeme();
             this->printRule(4);
             this->Assignment();
-        } else if (this->current->second.first == Category::Keywords && this->current->second.second <= 2){
+        } else if (this->current->second.first == Category::Keywords && this->current->second.second <= 2) {
             this->printLexeme();
             this->printRule(6);
             this->Declarative();
-        } else if (this->current->first == "(")
-        {
+        } else if (this->current->first == "STDoutput") {
+            this->printLexeme();
+            this->increment(1);
+            if (this->current->first == "(") {
+                this->increment_flag = true;
+                this->Expression();
+                this->increment_flag = false;
+            } else {
+                std::cerr << "Error: Expected (";
+                exit(1);
+            }
+            this->genInstr(Instructions::STDOUT);
+        } else if (this->current->first == "STDinput") {
+            this->genInstr(Instructions::STDIN);
+            this->printLexeme();
+            this->increment(1);
+            if (this->current->first == "(") {
+                this->increment_flag = true;
+                this->Expression();
+                this->increment_flag = false;
+            } else {
+                std::cerr << "Error: Expected (";
+                exit(1);
+            }
+        } else if (this->current->first == "(") {
             this->Expression();
         } else if (this->current->first == ")") {
             this->increment(1);
         } else if (this->current->first == "if" || this->current->first == "while") {
+            if (this->current->first == "while") {
+                this->jump_stack.push(this->instr_address);
+                this->genInstr(Instructions::LABEL);
+                this->while_flag = true;
+            } else {
+                this->if_flag = true;
+            }
             this->Conditional();
             if (this->current->first == "{") {
-                this->if_flag = true;
                 this->printLexeme();
                 this->printRule(10);
                 this->increment(1);
@@ -486,12 +525,19 @@ void Parser::Statement() {
             this->back_patch(this->instr_address);
             this->if_flag = false;
         }
-        if (this->getNext()->first != "else") {
-            if (this->getNext()->first != "endif") {
-                std::cerr << "Error: Expected endif\n";
-                exit(1);
-            } else {
-                this->increment(1);
+        if (this->while_flag) {
+            this->back_patch(this->instr_address + 1);
+            this->genInstr(Instructions::JUMP, this->jump_stack.top());
+            this->jump_stack.pop();
+            this->while_flag = false;
+        } else {
+            if (this->getNext()->first != "else") {
+                if (this->getNext()->first != "endif") {
+                    std::cerr << "Error: Expected endif\n";
+                    exit(1);
+                } else {
+                    this->increment(1);
+                }
             }
         }
     }
@@ -623,6 +669,7 @@ void Parser::Expression() {
     this->printRule(0);
     this->Term();
     if (this->getNext()->first == "+" || this->getNext()->first == "-") {
+        this->increment_flag = false;
         this->increment(1);
         this->ExpressionPrime();
     }
@@ -651,6 +698,7 @@ void Parser::Term() {
     this->printRule(1);
     this->Factor();
     if (this->getNext()->first == "*" || this->getNext()->first == "/") {
+        this->increment_flag = false;
         this->increment(1);
         this->TermPrime();
     }
@@ -693,6 +741,9 @@ void Parser::Factor() {
         else if (this->current->first == "(") {
             this->increment(1);
             this->Expression();
+            if (this->increment_flag) {
+                this->increment(1);
+            }
             if (this->current->first != ")") {
                 std::cerr << "Expected \")\"\n";
                 exit(1);
@@ -755,18 +806,25 @@ void Parser::printLexeme() {
 
 void Parser::printInstructions() {
     std::cout << std::endl;
+    this->parser_output << std::endl;
     for (int i = 0; i < this->instr_table.size(); i++) {
         Instruction instr = instr_table.at(i);
         std::cout << std::to_string(instr.address) + "\t" + instr.operation + "\t" + instr.operand + "\n";
+        this->parser_output << std::to_string(instr.address) + "\t" + instr.operation + "\t" + instr.operand + "\n";
     }
     std::cout << std::endl;
+    this->parser_output << std::endl;
 }
 
 void Parser::printSymbolTable() {
     std::cout << std::endl;
-//    std::cout << std::setw(20) << "Something Else" << std::setw(20) << "MemoryLocation" << std::setw(20) << "Type\n";
+    this->parser_output << std::endl;
+    std::cout << std::setw(20) << "Identifier" << std::setw(20) << "MemoryLocation" << std::setw(20) << "Type\n";
+    this->parser_output << std::setw(20) << "Identifier" << std::setw(20) << "MemoryLocation" << std::setw(20) << "Type\n";
     for (auto symbol : this->symbol_table) {
         std::cout << std::setw(20) << symbol.first << std::setw(20) << symbol.second.first << std::setw(20) << type_names[symbol.second.second] << "\n";
+        this->parser_output << std::setw(20) << symbol.first << std::setw(20) << symbol.second.first << std::setw(20) << type_names[symbol.second.second] << "\n";
     }
     std::cout << std::endl;
+    this->parser_output << std::endl;
 }
