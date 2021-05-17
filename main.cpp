@@ -10,32 +10,35 @@
                Janelle Estabillo
 */
 #include "Parser.h"
+#include "Lexer.h"
 
 int main(int argc, char *argv[]) 
 {
     // Declare parser as a pointer so that we can choose which constructor to call based on command-line arguments
-    Parser parser; 
+    Lexer lexer;
+    Parser parser;
 
     if (argc == 1) 
     {
         // Use default file name from default constructor
-        parser = Parser();
+        lexer = Lexer();
     } 
     else if (argc == 2) 
     {
         // Pass filename from command-line argument to constructor
         std::string filename = argv[1];
-        parser = Parser(filename);
+        lexer = Lexer(filename);
     } else {
         // Too many arguments from command-line, give user error and exit.
         std::cerr << "Too many arguments!";
         exit(1);
     }
+    parser = Parser();
 
     // Begin lexical analysis
-    parser.lexer();
+
     // Begin syntax analysis
-    parser.parse();
+    parser.parse(lexer.lexer());
 
     return 0;
 }

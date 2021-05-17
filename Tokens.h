@@ -1,3 +1,5 @@
+#ifndef COMPILERPROJECT_TOKENS_H
+#define COMPILERPROJECT_TOKENS_H
 
 #include <string>
 #include <unordered_map>
@@ -9,13 +11,13 @@ enum Category {
     Keywords,
     Identifiers,
     Literals 
-} category;
+};
 
 enum Numbers {
     Integer = 0,
     Float,
     String
-} numbers;
+};
 
 struct Tokens 
 {
@@ -45,6 +47,6 @@ struct Tokens
         { '<', 6}, { '%', 7}
     };
 
-
-
 };
+
+#endif //COMPILERPROJECT_TOKENS_H

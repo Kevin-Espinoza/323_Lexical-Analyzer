@@ -4,19 +4,19 @@ Token:	KEYWORD		Lexeme:	int
 	<Declarative> -> <Type> <ID>
 	<Type> -> bool | float | int
 
-Token:	IDENTIFIER	Lexeme:	num
+Token:	IDENTIFIER	Lexeme:	i
 
 Token:	SEPARATOR	Lexeme:	,
 
-Token:	IDENTIFIER	Lexeme:	nu2m
+Token:	IDENTIFIER	Lexeme:	max
 
 Token:	SEPARATOR	Lexeme:	,
 
-Token:	IDENTIFIER	Lexeme:	large$
+Token:	IDENTIFIER	Lexeme:	sum
 
 Token:	SEPARATOR	Lexeme:	;
 
-Token:	IDENTIFIER	Lexeme:	num
+Token:	IDENTIFIER	Lexeme:	sum
 	<Statement> -> <Assign>
 	<Assign> -> <ID> = <Expression>;
 
@@ -29,74 +29,52 @@ Token:		Lexeme:	0
 
 Token:	SEPARATOR	Lexeme:	;
 
-Token:	IDENTIFIER	Lexeme:	nu2m
+Token:	IDENTIFIER	Lexeme:	i
 	<Statement> -> <Assign>
 	<Assign> -> <ID> = <Expression>;
 
 Token:	OPERATOR	Lexeme:	=
 
-Token:		Lexeme:	15
+Token:		Lexeme:	1
 	<Expression> -> <Expression> + <Term> | <Expression> - <Term> | <Term>
 	<Term> -> <Term> * <Factor> | <Term> / <Factor> | <Factor>
 	<Factor> -> ( <Expression> ) | <ID> | <Num>
 
 Token:	SEPARATOR	Lexeme:	;
 
-Token:	KEYWORD		Lexeme:	bool
-	<Statement> -> <Declarative>
-	<Declarative> -> <Type> <ID>
-	<Type> -> bool | float | int
-
-Token:	IDENTIFIER	Lexeme:	hey
-
-Token:	SEPARATOR	Lexeme:	;
-
-Token:	IDENTIFIER	Lexeme:	hey
-	<Statement> -> <Assign>
-	<Assign> -> <ID> = <Expression>;
-
-Token:	OPERATOR	Lexeme:	=
-
-Token:	KEYWORD		Lexeme:	True
-	<Expression> -> <Expression> + <Term> | <Expression> - <Term> | <Term>
-	<Term> -> <Term> * <Factor> | <Term> / <Factor> | <Factor>
-	<Factor> -> ( <Expression> ) | <ID> | <Num>
-
-Token:	SEPARATOR	Lexeme:	;
-
-Token:	IDENTIFIER	Lexeme:	hey
-	<Statement> -> <Assign>
-	<Assign> -> <ID> = <Expression>;
-
-Token:	OPERATOR	Lexeme:	=
-
-Token:	KEYWORD		Lexeme:	False
-	<Expression> -> <Expression> + <Term> | <Expression> - <Term> | <Term>
-	<Term> -> <Term> * <Factor> | <Term> / <Factor> | <Factor>
-	<Factor> -> ( <Expression> ) | <ID> | <Num>
-
-Token:	SEPARATOR	Lexeme:	;
-
-Token:	KEYWORD		Lexeme:	if
-	<Conditional> -> <Expression> <Relop> <Expression> | <Expression>
+Token:	KEYWORD		Lexeme:	STDinput
 
 Token:	SEPARATOR	Lexeme:	(
+	<Expression> -> <Expression> + <Term> | <Expression> - <Term> | <Term>
+	<Term> -> <Term> * <Factor> | <Term> / <Factor> | <Factor>
+	<Factor> -> ( <Expression> ) | <ID> | <Num>
 
-Token:	IDENTIFIER	Lexeme:	num
+Token:	IDENTIFIER	Lexeme:	max
 	<Expression> -> <Expression> + <Term> | <Expression> - <Term> | <Term>
 	<Term> -> <Term> * <Factor> | <Term> / <Factor> | <Factor>
 	<Factor> -> ( <Expression> ) | <ID> | <Num>
 	<ID> -> id
 
-Token:	OPERATOR	Lexeme:	>
+Token:	SEPARATOR	Lexeme:	)
+
+Token:	SEPARATOR	Lexeme:	;
+
+Token:	KEYWORD		Lexeme:	while
+	<Conditional> -> <Expression> <Relop> <Expression> | <Expression>
+
+Token:	SEPARATOR	Lexeme:	(
+
+Token:	IDENTIFIER	Lexeme:	i
+	<Expression> -> <Expression> + <Term> | <Expression> - <Term> | <Term>
+	<Term> -> <Term> * <Factor> | <Term> / <Factor> | <Factor>
+	<Factor> -> ( <Expression> ) | <ID> | <Num>
+	<ID> -> id
+
+Token:	OPERATOR	Lexeme:	<
 <RELOP>
 
 
-Token:	OPERATOR	Lexeme:	=
-<RELOP>
-
-
-Token:	IDENTIFIER	Lexeme:	nu2m
+Token:	IDENTIFIER	Lexeme:	max
 	<Expression> -> <Expression> + <Term> | <Expression> - <Term> | <Term>
 	<Term> -> <Term> * <Factor> | <Term> / <Factor> | <Factor>
 	<Factor> -> ( <Expression> ) | <ID> | <Num>
@@ -108,66 +86,101 @@ Token:	SEPARATOR	Lexeme:	{
 Began code block
 
 
-Token:	IDENTIFIER	Lexeme:	large$
+Token:	IDENTIFIER	Lexeme:	sum
 	<Statement> -> <Assign>
 	<Assign> -> <ID> = <Expression>;
 
 Token:	OPERATOR	Lexeme:	=
 
-Token:	IDENTIFIER	Lexeme:	num
+Token:	IDENTIFIER	Lexeme:	sum
 	<Expression> -> <Expression> + <Term> | <Expression> - <Term> | <Term>
 	<Term> -> <Term> * <Factor> | <Term> / <Factor> | <Factor>
 	<Factor> -> ( <Expression> ) | <ID> | <Num>
 	<ID> -> id
+
+Token:	OPERATOR	Lexeme:	+
+
+Token:	IDENTIFIER	Lexeme:	i
+	<Term> -> <Term> * <Factor> | <Term> / <Factor> | <Factor>
+	<Factor> -> ( <Expression> ) | <ID> | <Num>
+	<ID> -> id
+
+Token:	SEPARATOR	Lexeme:	;
+
+Token:	IDENTIFIER	Lexeme:	i
+	<Statement> -> <Assign>
+	<Assign> -> <ID> = <Expression>;
+
+Token:	OPERATOR	Lexeme:	=
+
+Token:	IDENTIFIER	Lexeme:	i
+	<Expression> -> <Expression> + <Term> | <Expression> - <Term> | <Term>
+	<Term> -> <Term> * <Factor> | <Term> / <Factor> | <Factor>
+	<Factor> -> ( <Expression> ) | <ID> | <Num>
+	<ID> -> id
+
+Token:	OPERATOR	Lexeme:	+
+
+Token:		Lexeme:	1
+	<Term> -> <Term> * <Factor> | <Term> / <Factor> | <Factor>
+	<Factor> -> ( <Expression> ) | <ID> | <Num>
 
 Token:	SEPARATOR	Lexeme:	;
 
 Token:	SEPARATOR	Lexeme:	}
 
-Token:	KEYWORD		Lexeme:	else
+Token:	KEYWORD		Lexeme:	STDoutput
 
-Token:	SEPARATOR	Lexeme:	{
-Began code block
+Token:	SEPARATOR	Lexeme:	(
+	<Expression> -> <Expression> + <Term> | <Expression> - <Term> | <Term>
+	<Term> -> <Term> * <Factor> | <Term> / <Factor> | <Factor>
+	<Factor> -> ( <Expression> ) | <ID> | <Num>
 
-
-Token:	IDENTIFIER	Lexeme:	large$
-	<Statement> -> <Assign>
-	<Assign> -> <ID> = <Expression>;
-
-Token:	OPERATOR	Lexeme:	=
-
-Token:	IDENTIFIER	Lexeme:	nu2m
+Token:	IDENTIFIER	Lexeme:	sum
 	<Expression> -> <Expression> + <Term> | <Expression> - <Term> | <Term>
 	<Term> -> <Term> * <Factor> | <Term> / <Factor> | <Factor>
 	<Factor> -> ( <Expression> ) | <ID> | <Num>
 	<ID> -> id
 
+Token:	OPERATOR	Lexeme:	+
+
+Token:	IDENTIFIER	Lexeme:	max
+	<Term> -> <Term> * <Factor> | <Term> / <Factor> | <Factor>
+	<Factor> -> ( <Expression> ) | <ID> | <Num>
+	<ID> -> id
+
+Token:	SEPARATOR	Lexeme:	)
+
 Token:	SEPARATOR	Lexeme:	;
 
-Token:	KEYWORD		Lexeme:	endif
-
 1	PUSHI		0
-2	POPM		5000
-3	PUSHI		15
-4	POPM		5001
-5	PUSHI		1
-6	POPM		5003
-7	PUSHI		0
-8	POPM		5003
-9	PUSHM		5000
-10	PUSHM		5001
-11	GEQ			nil
-12	JUMPZ		16
+2	POPM		5002
+3	PUSHI		1
+4	POPM		5000
+5	STDIN		nil
+6	PUSHM		5001
+7	LABEL		nil
+8	PUSHM		5000
+9	PUSHM		5001
+10	LES			nil
+11	JUMPZ		21
+12	PUSHM		5002
 13	PUSHM		5000
-14	POPM		5002
-15	JUMP		18
-16	PUSHM		5001
-17	POPM		5002
+14	ADD			nil
+15	POPM		5002
+16	PUSHM		5000
+17	PUSHI		1
+18	ADD			nil
+19	POPM		5000
+20	JUMP		7
+21	PUSHM		5002
+22	PUSHM		5001
+23	ADD			nil
+24	STDOUT		nil
 
 
           Identifier      MemoryLocation               Type
-                 hey                5003                bool
-              large$                5002             integer
-                nu2m                5001             integer
-                 num                5000             integer
+                   i                5000             integer
+                 max                5001             integer
+                 sum                5002             integer
 
